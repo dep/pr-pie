@@ -1,0 +1,116 @@
+#pr-pie-panel {
+  margin: 0 0 16px;
+  border: 1px solid var(--borderColor-default, var(--color-border-default, #d0d7de));
+  border-radius: 6px;
+  background: var(--bgColor-default, var(--color-canvas-default, #ffffff));
+  color: var(--fgColor-default, var(--color-fg-default, #1f2328));
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.pr-pie-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 16px;
+  background: var(--bgColor-muted, var(--color-canvas-subtle, #f6f8fa));
+  border: 0;
+  border-bottom: 1px solid var(--borderColor-default, var(--color-border-default, #d0d7de));
+  border-radius: 6px 6px 0 0;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+#pr-pie-panel.is-collapsed .pr-pie-header {
+  border-bottom: 0;
+  border-radius: 6px;
+}
+
+.pr-pie-chevron {
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+#pr-pie-panel.is-collapsed .pr-pie-chevron {
+  transform: rotate(-90deg);
+}
+
+.pr-pie-body {
+  padding: 16px;
+}
+
+#pr-pie-panel.is-collapsed .pr-pie-body {
+  display: none;
+}
+
+.pr-pie-chart {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.pr-pie-slice {
+  stroke: var(--bgColor-default, var(--color-canvas-default, #ffffff));
+  stroke-width: 2;
+}
+
+.pr-pie-slice.is-dimmed {
+  opacity: 0.35;
+}
+
+.pr-pie-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pr-pie-legend li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.pr-pie-legend li.is-active {
+  background: var(--bgColor-muted, var(--color-canvas-subtle, #f6f8fa));
+}
+
+.pr-pie-legend li.is-dimmed {
+  opacity: 0.5;
+}
+
+.pr-pie-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+  align-self: center;
+}
+
+.pr-pie-percent {
+  font-weight: 600;
+  min-width: 34px;
+}
+
+.pr-pie-adds {
+  color: var(--fgColor-success, var(--color-success-fg, #1a7f37));
+}
+
+.pr-pie-dels {
+  color: var(--fgColor-danger, var(--color-danger-fg, #d1242f));
+}
+
+.pr-pie-count,
+.pr-pie-note {
+  color: var(--fgColor-muted, var(--color-fg-muted, #59636e));
+}
+
+.pr-pie-note {
+  margin: 0;
+}

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "PR Pie",
+  "version": "0.1.0",
+  "description": "Donut-chart breakdown of a GitHub pull request's changes by file type.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": [
+        "src/classifier.js",
+        "src/diff-fetcher.js",
+        "src/chart-data.js",
+        "src/chart.js",
+        "src/content.js"
+      ],
+      "css": ["styles/panel.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
