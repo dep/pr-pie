@@ -86,9 +86,13 @@ Pure function `classify(path) → category`. Rules evaluated in order; first mat
 
 ### Manifest
 
-- MV3. `content_scripts` matched to `https://github.com/*/pull/*` (all frames: false),
-  scripts in dependency order, one CSS file.
-- Permissions: `storage` only. No host permissions beyond the content-script match.
+- MV3. `content_scripts` matched to `https://github.com/*` (all frames: false) — broad on
+  purpose: GitHub's Turbo SPA swaps the body without a reload, so a `/pull/*`-only match
+  never injects on client-side navigation into a PR. Scripts listed in dependency order,
+  one CSS file.
+- Background service worker (`src/background.js`) fetches the `.diff`; host permissions:
+  `https://github.com/*` and `https://patch-diff.githubusercontent.com/*` (the redirect
+  target). Other permissions: `storage` only.
 - Scope: github.com only (no GitHub Enterprise domains).
 
 ## Error handling

@@ -3,10 +3,10 @@
     const files = [];
     let current = null;
     for (const line of text.split('\n')) {
-      const header = line.match(/^diff --git a\/(.+?) b\/(.+)$/);
-      if (header) {
-        current = { path: header[2], additions: 0, deletions: 0, binary: false };
-        files.push(current);
+      if (line.startsWith('diff --git ')) {
+        const header = line.match(/^diff --git "?a\/(.+?)"? "?b\/(.+?)"?$/);
+        current = header ? { path: header[2], additions: 0, deletions: 0, binary: false } : null;
+        if (current) files.push(current);
         continue;
       }
       if (!current) continue;

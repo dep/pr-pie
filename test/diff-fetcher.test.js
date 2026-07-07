@@ -58,3 +58,30 @@ test('prDiffUrl extracts the PR .diff URL from any PR sub-page', () => {
   );
   assert.equal(prDiffUrl('https://github.com/Invoca/Titan/issues/1'), null);
 });
+
+test('quoted paths (special characters) are parsed, not misattributed', () => {
+  const text = 'diff --git "a/caf\\303\\251.md" "b/caf\\303\\251.md"\n' +
+    '--- "a/caf\\303\\251.md"\n' +
+    '+++ "b/caf\\303\\251.md"\n' +
+    '@@ -1 +1 @@\n' +
+    '-x\n' +
+    '+y\n';
+  const files = parseDiff(text);
+  assert.equal(files.length, 1);
+  assert.equal(files[0].additions, 1);
+  assert.equal(files[0].deletions, 1);
+  assert.ok(files[0].path.endsWith('.md'));
+});
+
+test('unparseable diff header drops the file instead of misattributing lines', () => {
+  const text = 'diff --git a/ok.js b/ok.js\n' +
+    '+++ b/ok.js\n' +
+    '@@ -0,0 +1 @@\n' +
+    '+1\n' +
+    'diff --git weird header line\n' +
+    '+++ b/x\n' +
+    '+should not count\n';
+  const files = parseDiff(text);
+  assert.equal(files.length, 1);
+  assert.deepEqual(files[0], { path: 'ok.js', additions: 1, deletions: 0, binary: false });
+});
