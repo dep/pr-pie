@@ -28,15 +28,25 @@
 
   const cache = new Map();
 
+  function fetchDiffText(url) {
+    if (typeof chrome !== 'undefined' && chrome.runtime?.id) {
+      return chrome.runtime.sendMessage({ type: 'pr-pie-fetch-diff', url }).then((res) => {
+        if (!res) throw new Error(chrome.runtime.lastError?.message || 'no response from background');
+        if (!res.ok) throw new Error(res.error);
+        return res.text;
+      });
+    }
+    return fetch(url, { credentials: 'include' }).then((res) => {
+      if (!res.ok) throw new Error(`diff fetch failed: HTTP ${res.status}`);
+      return res.text();
+    });
+  }
+
   function fetchPrDiff(href) {
     const url = prDiffUrl(href);
     if (!url) return Promise.reject(new Error(`not a PR URL: ${href}`));
     if (!cache.has(url)) {
-      const promise = fetch(url, { credentials: 'same-origin' })
-        .then((res) => {
-          if (!res.ok) throw new Error(`diff fetch failed: HTTP ${res.status}`);
-          return res.text();
-        })
+      const promise = fetchDiffText(url)
         .then(parseDiff)
         .catch((err) => {
           cache.delete(url);
@@ -47,7 +57,7 @@
     return cache.get(url);
   }
 
-  const api = { parseDiff, prDiffUrl, fetchPrDiff };
+  const api = { parseDiff, prDiffUrl, fetchPrDiff, fetchDiffText };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else globalThis.PRPie = Object.assign(globalThis.PRPie || {}, api);
 })();

@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Donut-chart breakdown of a GitHub pull request's changes by file type.",
   "permissions": ["storage"],
+  "background": { "service_worker": "src/background.js" },
+  "host_permissions": [
+    "https://github.com/*",
+    "https://patch-diff.githubusercontent.com/*"
+  ],
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
