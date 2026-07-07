@@ -72,16 +72,21 @@
     anchor.prepend(panel);
     mountedPath = path;
 
+    let content;
     try {
       const files = await fetchPrDiff(location.href);
       const rows = aggregate(files, classify);
-      panel.querySelector('.pr-pie-body').replaceChildren(
-        rows.length ? buildChart(rows) : note('No changes found in this diff.')
-      );
+      content = rows.length ? buildChart(rows) : note('No changes found in this diff.');
     } catch (err) {
       console.warn('[pr-pie]', err);
-      panel.querySelector('.pr-pie-body').replaceChildren(note('Couldn't load diff data.'));
+      content = note("Couldn't load diff data.");
     }
+    if (!panel.isConnected) {
+      if (mountedPath === path) mountedPath = '';
+      schedule();
+      return;
+    }
+    panel.querySelector('.pr-pie-body').replaceChildren(content);
   }
 
   let scheduled = false;
