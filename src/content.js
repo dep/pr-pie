@@ -2,10 +2,10 @@
   const { classify, fetchPrDiff, aggregate, buildChart } = globalThis.PRPie;
   const PANEL_ID = 'pr-pie-panel';
   const DIFF_PAGE = /^\/[^/]+\/[^/]+\/pull\/\d+\/(files|changes)(\/|$)/;
-  // verified/corrected against the live site in the manual-verification task
   const ANCHOR_SELECTORS = [
     '#files',                          // classic Files changed view
-    '[data-testid="diff-view"]',       // new Changes view (guess — verify)
+    '[data-testid="diff-content"]',    // new Changes view (verified live)
+    '[data-testid="diff-view"]',       // new Changes view, older markup
   ];
 
   function note(text) {
