@@ -16,14 +16,18 @@ a glance that, e.g., 30% of a PR is markdown and 40% is tests.
 |---|---|
 | Slice weighting | Lines changed (additions + deletions), not file count |
 | Classification | Role-first built-in rules (tests/docs/config/assets/styles), then language by extension |
-| Data source | Fetch the PR's `.diff` URL using the browser session (works on private repos, no token) |
+| Data source | Fetch the PR's `.diff` URL using the browser session (works on private repos, no token). *Revised during verification:* the fetch runs in a background service worker — GitHub 302-redirects `.diff` to `patch-diff.githubusercontent.com`, which serves no CORS headers, so content-script fetch fails; worker host permissions bypass CORS |
 | Interactivity | Donut + legend with hover highlighting and exact counts; collapsible; no filtering |
 | Stack | Vanilla JS, no build step, no dependencies; hand-rolled SVG donut |
 
 ## Architecture
 
-Four content-script modules loaded in order via `manifest.json`, plus one stylesheet.
-No background service worker.
+Content-script modules loaded in order via `manifest.json`, plus one stylesheet and a
+minimal background service worker (`src/background.js`) whose sole job is fetching the
+`.diff` cross-origin (see Data source revision above). The manifest also matches all of
+`https://github.com/*` rather than only PR URLs: GitHub's Turbo SPA swaps the page body
+without a reload, so a narrower match would never inject on client-side navigation into
+a PR.
 
 ### 1. `src/diff-fetcher.js`
 
@@ -82,9 +86,13 @@ Pure function `classify(path) → category`. Rules evaluated in order; first mat
 
 ### Manifest
 
-- MV3. `content_scripts` matched to `https://github.com/*/pull/*` (all frames: false),
-  scripts in dependency order, one CSS file.
-- Permissions: `storage` only. No host permissions beyond the content-script match.
+- MV3. `content_scripts` matched to `https://github.com/*` (all frames: false) — broad on
+  purpose: GitHub's Turbo SPA swaps the body without a reload, so a `/pull/*`-only match
+  never injects on client-side navigation into a PR. Scripts listed in dependency order,
+  one CSS file.
+- Background service worker (`src/background.js`) fetches the `.diff`; host permissions:
+  `https://github.com/*` and `https://patch-diff.githubusercontent.com/*` (the redirect
+  target). Other permissions: `storage` only.
 - Scope: github.com only (no GitHub Enterprise domains).
 
 ## Error handling
